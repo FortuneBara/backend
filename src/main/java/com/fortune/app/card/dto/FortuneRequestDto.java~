@@ -1,0 +1,21 @@
+package com.fortune.app.card.dto;
+
+import com.fortune.app.card.entity.Fortune;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class FortuneRequestDto {
+    private String type;
+
+    public static FortuneRequestDto mapToDto(Fortune entity) {
+        return FortuneRequestDto.builder()
+                .type(entity.getType())
+                .build();
+    }
+}
