@@ -55,13 +55,12 @@ public class UserServiceTest {
         savedUser = userRepository.save(
                 User.builder()
                         .name("John Doe")
-                        .birth(new Date(2000, 1, 1))
                         .email("john.doe@example.com")
-                        .nickname("johnny")
                         .provider("Google")
                         .providerUid("1234")
                         .accessToken("access_token")
                         .refreshToken("refresh_token")
+                        .isRegistered(true)
                         .build()
         );
     }
@@ -70,20 +69,14 @@ public class UserServiceTest {
     @Test
     void testSignUp_CachePut() {
         UserRequestDto requestDto = UserRequestDto.builder()
-                .name("Jane Doe")
+                .userId(savedUser.getUserId())
                 .birth(new Date(2000, 1, 1))
-                .email("jane.doe@example.com")
-                .nickname("jane")
-                .provider("Google")
-                .providerUid("5678")
-                .accessToken("access_token")
-                .refreshToken("refresh_token")
+                .nickname("john")
                 .build();
 
-        UserDto userDto = userService.signUp(requestDto);
+        UserDto userDto = userService.completeRegistration(requestDto);
 
         assertThat(userDto).isNotNull();
-        assertThat(userDto.getEmail()).isEqualTo("jane.doe@example.com");
 
         Object cachedUser = redisTemplate.opsForValue().get("user::UserService_" + userDto.getUserId());
         assertThat(cachedUser).isNotNull();
@@ -107,13 +100,13 @@ public class UserServiceTest {
     @Test
     void testUpdateUser_CachePut() {
         UserRequestDto updateDto = UserRequestDto.builder()
-                .name("John Updated")
+                .nickname("John Updated")
                 .build();
 
         UserDto updatedUser = userService.updateUser(savedUser.getUserId(), updateDto);
 
         assertThat(updatedUser).isNotNull();
-        assertThat(updatedUser.getName()).isEqualTo("John Updated");
+        assertThat(updatedUser.getNickname()).isEqualTo("John Updated");
 
         Object cachedUser = redisTemplate.opsForValue().get("user::UserService_" + savedUser.getUserId());
         assertThat(cachedUser).isNotNull();
