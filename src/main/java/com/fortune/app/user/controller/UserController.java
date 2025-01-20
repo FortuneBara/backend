@@ -15,7 +15,7 @@ import static com.fortune.app.user.validation.UserValidationGroups.SignUpGroup;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 public class UserController {
 
     private final UserService userService;
@@ -26,8 +26,8 @@ public class UserController {
 
     @MethodTimeCheck
     @PostMapping("/sign-up")
-    public ResponseEntity<UserDto> createUser(@Validated(SignUpGroup.class) @RequestBody UserRequestDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.signUp(dto));
+    public ResponseEntity<UserDto> completeSignup(@Validated(SignUpGroup.class) @RequestBody UserRequestDto dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.completeRegistration(dto));
     }
 
     @GetMapping("/{userId}")

@@ -21,13 +21,11 @@ public class UserDto {
     @NotNull(message = "name is required.")
     private String name;
 
-    @NotNull(message = "email is required.")
     private String email;
 
-    @NotNull(message = "nickname is required.")
     private String nickname;
 
-    @NotNull(message = "birth is required.")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date birth;
 
     // Oauth
@@ -40,8 +38,9 @@ public class UserDto {
     @NotNull(message = "accessToken is required.")
     private String accessToken;
 
-    @NotNull(message = "refreshToken is required.")
     private String refreshToken;
+
+    private Boolean isRegistered;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;

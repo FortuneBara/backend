@@ -32,28 +32,17 @@ public class UserService {
     }, evict = {
             @CacheEvict(value = "userList", key = "#root.targetClass.simpleName")}
     )
-    public UserDto signUp(UserRequestDto dto) {
-        if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new CustomException(ErrorCode.HAS_EMAIL);
+    public UserDto completeRegistration(UserRequestDto dto) {
+        Optional<User> oauthUser = userRepository.findById(dto.getUserId());
+        if (!oauthUser.isPresent()) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
-        if (userRepository.existsByNickname(dto.getNickname())) {
-            throw new CustomException(ErrorCode.HAS_NICKNAME);
-        }
+        User user = oauthUser.get();
+        user.completeRegistration(dto.getNickname(), dto.getBirth());
+        userRepository.save(user);
 
-        User user = User.builder()
-                .name(dto.getName())
-                .birth(dto.getBirth())
-                .email(dto.getEmail())
-                .nickname(dto.getNickname())
-                .provider(dto.getProvider())
-                .providerUid(dto.getProviderUid())
-                .accessToken(dto.getAccessToken())
-                .refreshToken(dto.getRefreshToken())
-                .build();
-        User savedUser = userRepository.save(user);
-
-        return UserDto.mapToDto(savedUser);
+        return UserDto.mapToDto(user);
     }
 
     @Transactional(readOnly = true)
@@ -81,24 +70,13 @@ public class UserService {
     }
 
     private void updateUserFields(User user, UserRequestDto dto) {
-        Optional.ofNullable(dto.getName()).ifPresent(user::setName);
         Optional.ofNullable(dto.getBirth()).ifPresent(user::setBirth);
-        Optional.ofNullable(dto.getEmail()).ifPresent(user::setEmail);
         Optional.ofNullable(dto.getNickname()).ifPresent(user::setNickname);
-        Optional.ofNullable(dto.getProvider()).ifPresent(user::setProvider);
-        Optional.ofNullable(dto.getProviderUid()).ifPresent(user::setProviderUid);
-        Optional.ofNullable(dto.getAccessToken()).ifPresent(user::setAccessToken);
-        Optional.ofNullable(dto.getRefreshToken()).ifPresent(user::setRefreshToken);
 
         user.setUpdatedAt(LocalDateTime.now());
     }
 
     private void validateUserFields(UserRequestDto dto, User user) {
-        if (dto.getEmail() != null && !dto.getEmail().equals(user.getEmail()) &&
-                userRepository.existsByEmail(dto.getEmail())) {
-            throw new CustomException(ErrorCode.HAS_EMAIL);
-        }
-
         if (dto.getNickname() != null && !dto.getNickname().equals(user.getNickname()) &&
                 userRepository.existsByNickname(dto.getNickname())) {
             throw new CustomException(ErrorCode.HAS_NICKNAME);

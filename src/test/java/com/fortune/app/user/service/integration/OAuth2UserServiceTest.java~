@@ -1,0 +1,124 @@
+package com.fortune.app.user.service.integration;
+
+import com.fortune.app.user.entity.User;
+import com.fortune.app.user.repository.UserRepository;
+import com.fortune.app.user.service.OAuth2UserServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+
+import java.time.Instant;
+import java.util.Map;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
+
+class OAuth2UserServiceTest {
+
+    @InjectMocks
+    private OAuth2UserServiceImpl oAuth2UserService;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private OAuth2UserService<OAuth2UserRequest, OAuth2User> delegateOAuth2UserService;
+
+    private OAuth2UserRequest mockUserRequest;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+
+        // Mock OAuth2UserRequest 생성
+        ClientRegistration clientRegistration = ClientRegistration.withRegistrationId("google")
+                .authorizationUri("https://accounts.google.com/o/oauth2/auth")
+                .tokenUri("https://oauth2.googleapis.com/token")
+                .userInfoUri("https://www.googleapis.com/oauth2/v3/userinfo")
+                .clientId("test-client-id")
+                .clientSecret("test-client-secret")
+                .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
+                .scope("profile", "email")
+                .authorizationGrantType(org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE)
+                .build();
+
+        OAuth2AccessToken accessToken = new OAuth2AccessToken(
+                OAuth2AccessToken.TokenType.BEARER,
+                "test-token",
+                Instant.now(),
+                Instant.now().plusSeconds(3600)
+        );
+
+        mockUserRequest = new OAuth2UserRequest(clientRegistration, accessToken);
+    }
+
+    @Test
+    void testLoadUser_WhenUserExists() {
+        String email = "existinguser@gmail.com";
+        OAuth2User mockOAuth2User = createMockOAuth2User(email);
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(
+                User.builder()
+                        .email(email)
+                        .name("Existing User")
+                        .provider("google")
+                        .providerUid("google-1234")
+                        .build()
+        ));
+
+        OAuth2User returnedUser = oAuth2UserService.loadUser(mockUserRequest);
+
+        assertThat(returnedUser).isNotNull();
+
+        verify(userRepository, times(1)).findByEmail(email);
+        verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    void testLoadUser_WhenUserIsNew() {
+        String email = "newuser@gmail.com";
+        OAuth2User mockOAuth2User = createMockOAuth2User(email);
+
+        // DB에 없는 이메일
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        // 신규 회원 저장 Mock
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // 테스트 실행
+        OAuth2User returnedUser = oAuth2UserService.loadUser(mockUserRequest);
+
+        // 검증
+        assertThat(returnedUser).isNotNull();
+
+        verify(userRepository, times(1)).findByEmail(email);
+        verify(userRepository, times(1)).save(any(User.class));
+    }
+
+    private OAuth2User createMockOAuth2User(String email) {
+        return new OAuth2AuthenticatedPrincipal() {
+            @Override
+            public Map<String, Object> getAttributes() {
+                return Map.of(
+                        "email", email,
+                        "name", "Test User",
+                        "sub", "google-1234"
+                );
+            }
+
+            @Override
+            public String getName() {
+                return email;
+            }
+        };
+    }
+}
