@@ -39,3 +39,5 @@ application-test.properties
 .vscode/
 
 .env
+
+*~
