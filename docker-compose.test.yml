@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  redis-test-container:
+    image: redis:latest
+    container_name: redis-test-container
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_test_data:/data
+
+volumes:
+  redis_test_data:
