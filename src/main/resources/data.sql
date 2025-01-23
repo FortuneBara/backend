@@ -1,5 +1,0 @@
---INSERT INTO fortune (name) VALUES ('운세');
---INSERT INTO fortune (name) VALUES ('사랑');
---INSERT INTO fortune (name) VALUES ('커리어');
---INSERT INTO fortune (name) VALUES ('금전');
---INSERT INTO fortune (name) VALUES ('건강');
