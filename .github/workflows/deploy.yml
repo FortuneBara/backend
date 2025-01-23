@@ -103,12 +103,11 @@ jobs:
             --name fortune-container \
             --link mysql-container:mysql \
             --link redis-container:redis \
-            -e DB_HOST=mysql-container \
-            -e DB_PORT=3306 \
-            -e REDIS_HOST=redis-container \
-            -e REDIS_PORT=6379 \
-            -e SPRING_CACHE_TYPE=redis \
-            -e SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
-            -e SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
+            -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql-container:3306/fortune_db \
+            -e SPRING_DATASOURCE_USERNAME=root \
+            -e SPRING_DATASOURCE_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} \
+            -e SPRING_REDIS_HOST=redis-container \
+            -e SPRING_REDIS_PORT=6379 \
+            -v /home/ubuntu/config/application.properties:/app/config/application.properties \
             ${{ secrets.DOCKER_HUB_USERNAME }}/fortune-app:${{ env.VERSION }}
           EOF
