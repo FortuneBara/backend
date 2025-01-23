@@ -69,6 +69,7 @@ jobs:
           -e DB_PORT=3306 \
           -e REDIS_HOST=redis-container \
           -e REDIS_PORT=6379 \
+          -v /home/ubuntu/config/application.properties:/app/config/application.properties \
           ${{ secrets.DOCKER_HUB_USERNAME }}/fortune-app:${{ env.VERSION }}"
 
       - name: Deploy to EC2
