@@ -107,5 +107,6 @@ jobs:
             -e DB_PORT=3306 \
             -e REDIS_HOST=redis-container \
             -e REDIS_PORT=6379 \
+            -e SPRING_CACHE_TYPE=redis \
             ${{ secrets.DOCKER_HUB_USERNAME }}/fortune-app:${{ env.VERSION }}
           EOF
