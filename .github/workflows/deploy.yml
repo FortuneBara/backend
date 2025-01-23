@@ -28,6 +28,9 @@ jobs:
       - name: Build with Gradle (Skip Tests)
         run: ./gradlew build -x test
         
+      - name: Check if JAR file exists
+        run: ls -l build/libs/
+        
       - name: Build Docker Image with Version
         run: docker build --build-arg VERSION=${{ env.VERSION }} -t ${{ secrets.DOCKER_HUB_USERNAME }}/fortune-app:${{ env.VERSION }} .
 
