@@ -30,7 +30,7 @@ public class CardInterpretationController {
         return ResponseEntity.status(HttpStatus.OK).body(cardInterpretationService.getCardInterpretation(cardId));
     }
 
-    @PatchMapping("/{cardInterpretationId}")
+    @PutMapping("/{cardInterpretationId}")
     public ResponseEntity<CardInterpretationDto> updateCardInterpretation(@PathVariable("cardInterpretationId") Long cardId,
                                                                           @Valid @RequestBody CardInterpretationRequestDto dto) {
         return ResponseEntity.status(HttpStatus.OK).body(cardInterpretationService.updateCardInterpretation(cardId, dto));

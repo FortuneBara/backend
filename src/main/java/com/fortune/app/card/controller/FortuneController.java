@@ -30,7 +30,7 @@ public class FortuneController {
         return ResponseEntity.status(HttpStatus.OK).body(fortuneService.getFortune(fortuneId));
     }
 
-    @PatchMapping("/{fortuneId}")
+    @PutMapping("/{fortuneId}")
     public ResponseEntity<FortuneDto> updateFortune(@PathVariable("fortuneId") Long fortuneId,
                                                     @Valid @RequestBody FortuneRequestDto dto) {
         return ResponseEntity.status(HttpStatus.OK).body(fortuneService.updateFortune(fortuneId, dto));

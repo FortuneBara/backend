@@ -30,7 +30,7 @@ public class CardLogController {
         return ResponseEntity.status(HttpStatus.OK).body(cardLogService.getCardLog(cardId));
     }
 
-    @PatchMapping("/{cardLogId}")
+    @PutMapping("/{cardLogId}")
     public ResponseEntity<CardLogDto> updateCardLog(@PathVariable("cardLogId") Long cardId,
                                                     @Valid @RequestBody CardLogRequestDto dto) {
         return ResponseEntity.status(HttpStatus.OK).body(cardLogService.updateCardLog(cardId, dto));
