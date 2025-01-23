@@ -26,13 +26,13 @@ jobs:
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
 
       - name: Build with Gradle (Skip Tests)
-        run: ./gradlew build -Pversion=${{ env.VERSION }} -x test
+        run: ./gradlew build -x test
         
       - name: Check if JAR file exists
         run: ls -l build/libs/
         
       - name: Build Docker Image with Version
-        run: docker build --build-arg VERSION=${{ env.VERSION }} -t ${{ secrets.DOCKER_HUB_USERNAME }}/fortune-app:${{ env.VERSION }} .
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/fortune-app:${{ env.VERSION }} .
 
       - name: Log in to Docker Hub
         run: echo ${{ secrets.DOCKER_HUB_PASSWORD }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
