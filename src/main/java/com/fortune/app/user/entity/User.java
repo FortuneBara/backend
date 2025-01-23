@@ -47,6 +47,7 @@ public class User {
     @Column(name = "refresh_token")
     private String refreshToken;
 
+    @Builder.Default
     @Column(name = "is_registered", nullable = false)
     private Boolean isRegistered = false;
 
