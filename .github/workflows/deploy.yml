@@ -44,6 +44,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Debug SSH Connection
+        run: ssh -v -o StrictHostKeyChecking=no -i deploy_key.pem ${{ vars.EC2_USERNAME }}@${{ vars.EC2_HOST }} "echo Connected"
+
       - name: Copy SSH Key
         run: |
           echo "${{ secrets.EC2_SSH_KEY }}" > deploy_key.pem
