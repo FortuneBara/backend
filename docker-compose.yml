@@ -21,21 +21,22 @@ services:
     volumes:
       - redis_data:/data
 
-  fortune-app:
-    build: .
-    container_name: fortune-app
-    restart: unless-stopped
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container:3306/${MYSQL_DATABASE}
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      SPRING_REDIS_HOST: redis-container
-      SPRING_REDIS_PORT: 6379
-    depends_on:
-      - mysql-container
-      - redis-container
+#  fortune-app:
+#    build: .
+#    container_name: fortune-app
+#    restart: unless-stopped
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      MYSQL_HOST: mysql-container
+#      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container:3306/${MYSQL_DATABASE}
+#      SPRING_DATASOURCE_USERNAME: root
+#      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+#      SPRING_REDIS_HOST: redis-container
+#      SPRING_REDIS_PORT: 6379
+#    depends_on:
+#      - mysql-container
+#      - redis-container
 
 volumes:
   mysql_data:
