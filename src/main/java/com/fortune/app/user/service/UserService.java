@@ -27,8 +27,9 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     @Caching(put = {
-            @CachePut(value = "user", key = "#root.targetClass.simpleName + '_' + #result.userId")
+            @CachePut(value = "user", key = "#root.targetClass.simpleName + '_' + #dto.userId")
     }, evict = {
             @CacheEvict(value = "userList", key = "#root.targetClass.simpleName")}
     )
