@@ -46,7 +46,7 @@ jobs:
     steps:
       - name: Copy SSH Key
         run: |
-          echo "${{ secrets.EC2_SSH_KEY }}" | base64 --decode > deploy_key.pem
+          echo "${{ secrets.EC2_SSH_KEY }}" > deploy_key.pem
           chmod 600 deploy_key.pem
 
       - name: Deploy to EC2
