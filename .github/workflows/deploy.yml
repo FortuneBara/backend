@@ -108,5 +108,7 @@ jobs:
             -e REDIS_HOST=redis-container \
             -e REDIS_PORT=6379 \
             -e SPRING_CACHE_TYPE=redis \
+            -e SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
+            -e SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
             ${{ secrets.DOCKER_HUB_USERNAME }}/fortune-app:${{ env.VERSION }}
           EOF
