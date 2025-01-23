@@ -18,7 +18,10 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-
+      
+      - name: Grant execute permission to Gradle Wrapper
+        run: chmod +x ./gradlew 
+        
       - name: Extract Version from Tag
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
 
