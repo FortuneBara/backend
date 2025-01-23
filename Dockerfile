@@ -2,7 +2,7 @@ FROM openjdk:17
 
 WORKDIR /app
 
-ARG VERSION=0.0.1
+ARG VERSION=0.0.1-SNAPSHOT
 ENV VERSION=${VERSION}
 
 COPY build/libs/fortune-app-backend-${VERSION}.jar fortune-app.jar
