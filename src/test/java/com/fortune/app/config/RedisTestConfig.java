@@ -23,7 +23,7 @@ public class RedisTestConfig {
     @Bean
     @Primary
     public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory("localhost", 6379);
+        return new LettuceConnectionFactory("localhost", 6380);
     }
 
     @Bean
