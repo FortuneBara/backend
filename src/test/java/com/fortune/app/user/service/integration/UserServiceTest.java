@@ -1,5 +1,7 @@
 package com.fortune.app.user.service.integration;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fortune.app.FortuneAppBackendApplication;
 import com.fortune.app.config.RedisTestConfig;
 import com.fortune.app.user.dto.UserDto;
@@ -44,6 +46,8 @@ public class UserServiceTest {
 
     @Autowired
     private RedisTemplate<Object, Object> redisTemplate;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private User savedUser;
 
@@ -65,6 +69,11 @@ public class UserServiceTest {
         );
     }
 
+    @Test
+    void testRedisConnection() {
+        assertThat(redisTemplate.getConnectionFactory()).isNotNull();
+    }
+
     // 회원 가입 테스트
     @Test
     void testSignUp_CachePut() {
@@ -84,16 +93,22 @@ public class UserServiceTest {
 
     // 회원 조회 테스트
     @Test
-    void testGetUser_Cacheable() {
+    void testGetUser_Cacheable() throws Exception {
+        Object beforeCache = redisTemplate.opsForValue().get("user::UserService_" + savedUser.getUserId());
+        assertThat(beforeCache).isNull();
+
         UserDto userDto1 = userService.getUser(savedUser.getUserId());
         assertThat(userDto1).isNotNull();
 
-        Object cachedUser = redisTemplate.opsForValue().get("user::UserService_" + savedUser.getUserId());
-        assertThat(cachedUser).isNotNull();
+        Object afterCache = redisTemplate.opsForValue().get("user::UserService_" + savedUser.getUserId());
+        assertThat(afterCache).isNotNull();
 
-        UserDto userDto2 = userService.getUser(savedUser.getUserId());
-        assertThat(userDto2.getUserId()).isEqualTo(userDto1.getUserId());
-        assertThat(userDto2.getEmail()).isEqualTo(userDto1.getEmail());
+        UserDto cachedUserDto;
+        cachedUserDto = objectMapper.convertValue(afterCache, UserDto.class);
+        assertThat(cachedUserDto).isNotNull();
+
+        assertThat(cachedUserDto.getUserId()).isEqualTo(userDto1.getUserId());
+        assertThat(cachedUserDto.getEmail()).isEqualTo(userDto1.getEmail());
     }
 
     // 회원 수정 테스트
