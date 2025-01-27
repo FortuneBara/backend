@@ -1,6 +1,7 @@
 package com.fortune.app.user.service;
 
 import com.fortune.app.common.exception.CustomException;
+import com.fortune.app.common.util.CacheNames;
 import com.fortune.app.enums.ErrorCode;
 import com.fortune.app.user.dto.UserRequestDto;
 import com.fortune.app.user.repository.UserRepository;
@@ -29,9 +30,9 @@ public class UserService {
 
     @Transactional
     @Caching(put = {
-            @CachePut(value = "user", key = "#root.targetClass.simpleName + '_' + #dto.userId")
+            @CachePut(value = CacheNames.USER, key = "T(com.fortune.app.common.util.CacheUtil).getUserCacheKey(#dto.userId)")
     }, evict = {
-            @CacheEvict(value = "userList", key = "#root.targetClass.simpleName")}
+            @CacheEvict(value = CacheNames.USER_LIST, key = "T(com.fortune.app.common.util.CacheUtil).getUserListCacheKey()")}
     )
     public UserDto completeRegistration(UserRequestDto dto) {
         Optional<User> oauthUser = userRepository.findById(dto.getUserId());
@@ -47,7 +48,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "user", key = "#root.targetClass.simpleName + '_' + #userId")
+    @Cacheable(value = CacheNames.USER, key = "T(com.fortune.app.common.util.CacheUtil).getUserCacheKey(#userId)")
     public UserDto getUser(Long userId) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -56,9 +57,9 @@ public class UserService {
 
     @Transactional
     @Caching(put = {
-            @CachePut(value = "user", key = "#root.targetClass.simpleName + '_' + #userId")
+            @CachePut(value = CacheNames.USER, key = "T(com.fortune.app.common.util.CacheUtil).getUserCacheKey(#userId)")
     }, evict = {
-            @CacheEvict(value = "userList", key = "#root.targetClass.simpleName")
+            @CacheEvict(value = CacheNames.USER_LIST, key = "T(com.fortune.app.common.util.CacheUtil).getUserListCacheKey()")
     })
     public UserDto updateUser(Long userId, UserRequestDto dto) {
         User user = userRepository.findByUserId(userId)
@@ -86,8 +87,8 @@ public class UserService {
 
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = "user", key = "#root.targetClass.simpleName + '_' + #userId"),
-            @CacheEvict(value = "userList", key = "#root.targetClass.simpleName")
+            @CacheEvict(value = CacheNames.USER, key = "T(com.fortune.app.common.util.CacheUtil).getUserCacheKey(#userId)"),
+            @CacheEvict(value = CacheNames.USER_LIST, key = "T(com.fortune.app.common.util.CacheUtil).getUserListCacheKey()")
     })
     public void deleteUser(Long userId) {
         if (!userRepository.existsById(userId)) {
@@ -98,7 +99,7 @@ public class UserService {
     }
 
 
-    @Cacheable(value = "userList", key = "#root.targetClass.simpleName ")
+    @Cacheable(value = CacheNames.USER_LIST, key = "T(com.fortune.app.common.util.CacheUtil).getUserListCacheKey()")
     public List<UserDto> getUserList() {
         return userRepository.findAll()
                 .stream()

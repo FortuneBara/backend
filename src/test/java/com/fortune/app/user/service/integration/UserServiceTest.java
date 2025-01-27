@@ -1,8 +1,9 @@
 package com.fortune.app.user.service.integration;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fortune.app.FortuneAppBackendApplication;
+import com.fortune.app.common.util.CacheNames;
+import com.fortune.app.common.util.CacheUtil;
 import com.fortune.app.config.RedisTestConfig;
 import com.fortune.app.user.dto.UserDto;
 import com.fortune.app.user.dto.UserRequestDto;
@@ -67,6 +68,8 @@ public class UserServiceTest {
                         .isRegistered(true)
                         .build()
         );
+
+        userRepository.flush();
     }
 
     @Test
@@ -87,24 +90,23 @@ public class UserServiceTest {
 
         assertThat(userDto).isNotNull();
 
-        Object cachedUser = redisTemplate.opsForValue().get("user::UserService_" + userDto.getUserId());
+        Object cachedUser = redisTemplate.opsForValue().get(CacheNames.USER + "::" + CacheUtil.getUserCacheKey(userDto.getUserId()));
         assertThat(cachedUser).isNotNull();
     }
 
     // 회원 조회 테스트
     @Test
     void testGetUser_Cacheable() throws Exception {
-        Object beforeCache = redisTemplate.opsForValue().get("user::UserService_" + savedUser.getUserId());
+        Object beforeCache = redisTemplate.opsForValue().get(CacheNames.USER + "::" + CacheUtil.getUserCacheKey(savedUser.getUserId()));
         assertThat(beforeCache).isNull();
 
         UserDto userDto1 = userService.getUser(savedUser.getUserId());
         assertThat(userDto1).isNotNull();
 
-        Object afterCache = redisTemplate.opsForValue().get("user::UserService_" + savedUser.getUserId());
+        Object afterCache = redisTemplate.opsForValue().get(CacheNames.USER + "::" + CacheUtil.getUserCacheKey(savedUser.getUserId()));
         assertThat(afterCache).isNotNull();
 
-        UserDto cachedUserDto;
-        cachedUserDto = objectMapper.convertValue(afterCache, UserDto.class);
+        UserDto cachedUserDto = objectMapper.readValue(objectMapper.writeValueAsString(afterCache), UserDto.class);
         assertThat(cachedUserDto).isNotNull();
 
         assertThat(cachedUserDto.getUserId()).isEqualTo(userDto1.getUserId());
@@ -121,9 +123,10 @@ public class UserServiceTest {
         UserDto updatedUser = userService.updateUser(savedUser.getUserId(), updateDto);
 
         assertThat(updatedUser).isNotNull();
+        assertThat(updatedUser.getUserId()).isEqualTo(savedUser.getUserId());
         assertThat(updatedUser.getNickname()).isEqualTo("John Updated");
 
-        Object cachedUser = redisTemplate.opsForValue().get("user::UserService_" + savedUser.getUserId());
+        Object cachedUser = redisTemplate.opsForValue().get(CacheNames.USER + "::" + CacheUtil.getUserCacheKey(savedUser.getUserId()));
         assertThat(cachedUser).isNotNull();
     }
 
@@ -135,7 +138,7 @@ public class UserServiceTest {
         Optional<User> deletedUser = userRepository.findById(savedUser.getUserId());
         assertThat(deletedUser).isEmpty();
 
-        Object cachedUser = redisTemplate.opsForValue().get("user::UserService_" + savedUser.getUserId());
+        Object cachedUser = redisTemplate.opsForValue().get(CacheNames.USER + "::" + CacheUtil.getUserCacheKey(savedUser.getUserId()));
         assertThat(cachedUser).isNull();
     }
 }
