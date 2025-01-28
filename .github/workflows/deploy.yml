@@ -96,8 +96,6 @@ jobs:
           docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/fortune-app:${{ env.VERSION }}
           docker stop fortune-container || true
           docker rm fortune-container || true
-          docker stop fortune-container || true
-          docker rm fortune-container || true
           docker run -d \
             -p 8080:8080 \
             --name fortune-container \
