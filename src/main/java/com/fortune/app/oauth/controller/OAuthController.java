@@ -24,7 +24,7 @@ public class OAuthController {
     public String signupPage(@AuthenticationPrincipal OAuth2User oAuth2User, Model model) {
         String email = oAuth2User.getAttribute("email");
 
-        Optional<User> userOptional = userRepository.findByEmail(email);
+        Optional<User> userOptional = userRepository.findByEmailQueryDSL(email);
         if (userOptional.isPresent() && userOptional.get().getIsRegistered()) {
             return "redirect:/dashboard";
         }

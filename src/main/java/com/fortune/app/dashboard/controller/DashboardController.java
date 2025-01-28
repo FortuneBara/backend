@@ -28,7 +28,7 @@ public class DashboardController {
         }
 
         String email = oAuth2User.getAttribute("email");
-        Optional<User> userOptional = userRepository.findByEmail(email);
+        Optional<User> userOptional = userRepository.findByEmailQueryDSL(email);
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();

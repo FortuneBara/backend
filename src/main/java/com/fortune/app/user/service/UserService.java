@@ -35,7 +35,7 @@ public class UserService {
             @CacheEvict(value = CacheNames.USER_LIST, key = "T(com.fortune.app.common.util.CacheUtil).getUserListCacheKey()")}
     )
     public UserDto completeRegistration(UserRequestDto dto) {
-        Optional<User> oauthUser = userRepository.findById(dto.getUserId());
+        Optional<User> oauthUser = userRepository.findByUserIdQueryDSL(dto.getUserId());
         if (!oauthUser.isPresent()) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
@@ -50,7 +50,7 @@ public class UserService {
     @Transactional(readOnly = true)
     @Cacheable(value = CacheNames.USER, key = "T(com.fortune.app.common.util.CacheUtil).getUserCacheKey(#userId)")
     public UserDto getUser(Long userId) {
-        User user = userRepository.findByUserId(userId)
+        User user = userRepository.findByUserIdQueryDSL(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return UserDto.mapToDto(user);
     }
@@ -62,7 +62,7 @@ public class UserService {
             @CacheEvict(value = CacheNames.USER_LIST, key = "T(com.fortune.app.common.util.CacheUtil).getUserListCacheKey()")
     })
     public UserDto updateUser(Long userId, UserRequestDto dto) {
-        User user = userRepository.findByUserId(userId)
+        User user = userRepository.findByUserIdQueryDSL(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         validateUserFields(dto, user);
@@ -80,7 +80,7 @@ public class UserService {
 
     private void validateUserFields(UserRequestDto dto, User user) {
         if (dto.getNickname() != null && !dto.getNickname().equals(user.getNickname()) &&
-                userRepository.existsByNickname(dto.getNickname())) {
+                userRepository.existsByNicknameQueryDSL(dto.getNickname())) {
             throw new CustomException(ErrorCode.HAS_NICKNAME);
         }
     }
@@ -91,11 +91,11 @@ public class UserService {
             @CacheEvict(value = CacheNames.USER_LIST, key = "T(com.fortune.app.common.util.CacheUtil).getUserListCacheKey()")
     })
     public void deleteUser(Long userId) {
-        if (!userRepository.existsById(userId)) {
+        if (!userRepository.existsByUserIdQueryDSL(userId)) {
             throw new RuntimeException("User not found");
         }
 
-        userRepository.deleteById(userId);
+        userRepository.deleteByUserIdQueryDSL(userId);
     }
 
 

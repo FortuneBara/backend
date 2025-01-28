@@ -30,7 +30,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String accessToken = userRequest.getAccessToken().getTokenValue();
         String name = oAuth2User.getAttribute("name");
 
-        Optional<User> existingUser = userRepository.findByEmail(email);
+        Optional<User> existingUser = userRepository.findByEmailQueryDSL(email);
 
         User user;
         if (existingUser.isPresent()) {

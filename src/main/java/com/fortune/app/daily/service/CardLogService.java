@@ -63,7 +63,7 @@ public class CardLogService {
                 .ifPresent(cardLog::setCardInterpretation);
 
         Optional.ofNullable(dto.getUserId())
-                .map(id -> userRepository.findByUserId(id)
+                .map(id -> userRepository.findByUserIdQueryDSL(id)
                         .orElseThrow(() -> new RuntimeException("User not found")))
                 .ifPresent(cardLog::setUser);
 
@@ -88,7 +88,7 @@ public class CardLogService {
     }
 
     public List<CardLog> getCardLogListByUserId(Long userId) {
-        User user = userRepository.findByUserId(userId)
+        User user = userRepository.findByUserIdQueryDSL(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         return cardLogRepository.findByUser(user);
     }
