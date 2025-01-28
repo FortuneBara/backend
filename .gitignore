@@ -41,3 +41,5 @@ application-test.properties
 .env
 
 *~
+
+src/main/generated/
