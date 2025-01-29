@@ -51,7 +51,7 @@ public class UserService {
     @Cacheable(value = CacheNames.USER, key = "T(com.fortune.app.common.util.CacheUtil).getUserCacheKey(#userId)")
     public UserDto getUser(Long userId) {
         User user = userRepository.findByUserIdQueryDSL(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         return UserDto.mapToDto(user);
     }
 
@@ -92,7 +92,7 @@ public class UserService {
     })
     public void deleteUser(Long userId) {
         if (!userRepository.existsByUserIdQueryDSL(userId)) {
-            throw new RuntimeException("User not found");
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
         userRepository.deleteByUserIdQueryDSL(userId);
