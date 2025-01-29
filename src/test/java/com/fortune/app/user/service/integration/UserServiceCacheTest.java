@@ -10,6 +10,7 @@ import com.fortune.app.user.dto.UserRequestDto;
 import com.fortune.app.user.entity.User;
 import com.fortune.app.user.repository.UserRepository;
 import com.fortune.app.user.service.UserService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,6 +48,7 @@ public class UserServiceCacheTest {
 
     @Autowired
     private RedisTemplate<Object, Object> redisTemplate;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -70,6 +72,11 @@ public class UserServiceCacheTest {
         );
 
         userRepository.flush();
+    }
+
+    @AfterEach
+    void clearCacheAfterTest() {
+        redisTemplate.getConnectionFactory().getConnection().flushAll();
     }
 
     @Test
@@ -131,14 +138,14 @@ public class UserServiceCacheTest {
     }
 
     // 회원 탈퇴 테스트
-        @Test
-        void testDeleteUser_CacheEvict() {
-            userService.deleteUser(savedUser.getUserId());
+    @Test
+    void testDeleteUser_CacheEvict() {
+        userService.deleteUser(savedUser.getUserId());
 
-            Optional<User> deletedUser = userRepository.findByUserIdQueryDSL(savedUser.getUserId());
-            assertThat(deletedUser).isEmpty();
+        Optional<User> deletedUser = userRepository.findByUserIdQueryDSL(savedUser.getUserId());
+        assertThat(deletedUser).isEmpty();
 
-            Object cachedUser = redisTemplate.opsForValue().get(CacheNames.USER + "::" + CacheUtil.getUserCacheKey(savedUser.getUserId()));
-            assertThat(cachedUser).isNull();
-        }
+        Object cachedUser = redisTemplate.opsForValue().get(CacheNames.USER + "::" + CacheUtil.getUserCacheKey(savedUser.getUserId()));
+        assertThat(cachedUser).isNull();
+    }
 }
