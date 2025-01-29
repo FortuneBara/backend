@@ -34,7 +34,7 @@ import java.util.Optional;
 @ActiveProfiles("test")
 @Import(RedisTestConfig.class)
 @Transactional
-public class UserServiceTest {
+public class UserServiceCacheTest {
 
     @Autowired
     private UserService userService;
@@ -131,14 +131,14 @@ public class UserServiceTest {
     }
 
     // 회원 탈퇴 테스트
-    @Test
-    void testDeleteUser_CacheEvict() {
-        userService.deleteUser(savedUser.getUserId());
+        @Test
+        void testDeleteUser_CacheEvict() {
+            userService.deleteUser(savedUser.getUserId());
 
-        Optional<User> deletedUser = userRepository.findById(savedUser.getUserId());
-        assertThat(deletedUser).isEmpty();
+            Optional<User> deletedUser = userRepository.findByUserIdQueryDSL(savedUser.getUserId());
+            assertThat(deletedUser).isEmpty();
 
-        Object cachedUser = redisTemplate.opsForValue().get(CacheNames.USER + "::" + CacheUtil.getUserCacheKey(savedUser.getUserId()));
-        assertThat(cachedUser).isNull();
-    }
+            Object cachedUser = redisTemplate.opsForValue().get(CacheNames.USER + "::" + CacheUtil.getUserCacheKey(savedUser.getUserId()));
+            assertThat(cachedUser).isNull();
+        }
 }
