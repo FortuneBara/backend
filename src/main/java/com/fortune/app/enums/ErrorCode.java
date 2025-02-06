@@ -13,7 +13,8 @@ public enum ErrorCode {
     HAS_EMAIL(HttpStatus.BAD_REQUEST, "중복된 이메일입니다."),
     HAS_NICKNAME(HttpStatus.BAD_REQUEST, "중복된 닉네임입니다."),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "요청하신 정보를 확인해주세요.)"),
-    NOT_FOUND(HttpStatus.NOT_FOUND, "해당 요청 정보를 찾을 수 없습니다.");
+    NOT_FOUND(HttpStatus.NOT_FOUND, "해당 요청 정보를 찾을 수 없습니다."),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "토큰이 필요합니다.");
 
     private final HttpStatus status;
     private final String message;
