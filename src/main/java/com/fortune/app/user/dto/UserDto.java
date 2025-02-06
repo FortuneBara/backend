@@ -35,11 +35,6 @@ public class UserDto {
     @NotNull(message = "providerUid is required.")
     private String providerUid;
 
-    @NotNull(message = "accessToken is required.")
-    private String accessToken;
-
-    private String refreshToken;
-
     private Boolean isRegistered;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -58,8 +53,6 @@ public class UserDto {
                 .birth(entity.getBirth())
                 .provider(entity.getProvider())
                 .providerUid(entity.getProviderUid())
-                .accessToken(entity.getAccessToken())
-                .refreshToken(entity.getRefreshToken())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .createdBy(entity.getCreatedBy())

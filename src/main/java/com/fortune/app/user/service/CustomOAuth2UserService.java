@@ -50,8 +50,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (refreshToken == null) {
             throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
-        user.setAccessToken(accessToken);
-        user.setRefreshToken(refreshToken);
 
         userRepository.save(user);
 

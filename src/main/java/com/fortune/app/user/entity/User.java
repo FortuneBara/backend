@@ -39,14 +39,6 @@ public class User {
     @Column(name = "provider_uid", nullable = false)
     private String providerUid;
 
-    @Lob
-    @Column(name = "access_token", nullable = false)
-    private String accessToken;
-
-    @Lob
-    @Column(name = "refresh_token")
-    private String refreshToken;
-
     @Builder.Default
     @Column(name = "is_registered", nullable = false)
     private Boolean isRegistered = false;
@@ -115,21 +107,6 @@ public class User {
         this.providerUid = providerUid;
     }
 
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
 
     public Boolean getIsRegistered() {
         return isRegistered;
@@ -176,8 +153,6 @@ public class User {
                 .nickname(dto.getNickname())
                 .provider(dto.getProvider())
                 .providerUid(dto.getProviderUid())
-                .accessToken(dto.getAccessToken())
-                .refreshToken(dto.getRefreshToken())
                 .createdAt(dto.getCreatedAt())
                 .createdBy(dto.getCreatedBy())
                 .updatedAt(dto.getUpdatedAt())
