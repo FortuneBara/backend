@@ -29,3 +29,6 @@ spring.thymeleaf.prefix=classpath:/templates/
 spring.thymeleaf.suffix=.html
 spring.thymeleaf.enabled=true
 spring.thymeleaf.cache=false
+
+# JWT
+jwt.secret=secret
