@@ -29,8 +29,7 @@ public class JwtTokenProvider {
     }
 
     public String createAccessToken(String email) {
-        // 30분
-        long accessTokenValidity = 1000 * 60 * 30;
+        long accessTokenValidity = 1000 * 60 * 60 * 24;
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
