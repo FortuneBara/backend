@@ -1,7 +1,5 @@
 package com.fortune.app.user.service;
 
-import com.fortune.app.common.exception.CustomException;
-import com.fortune.app.enums.ErrorCode;
 import com.fortune.app.jwt.JwtTokenProvider;
 import com.fortune.app.user.entity.User;
 import com.fortune.app.user.repository.UserRepository;
@@ -34,24 +32,18 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Optional<User> existingUser = userRepository.findByEmailQueryDSL(email);
 
         User user;
-        user = existingUser.orElseGet(() -> User.builder()
-                .email(email)
-                .name(name)
-                .provider(provider)
-                .providerUid(providerUid)
-                .isRegistered(false)
-                .build());
-
-        String accessToken = jwtTokenProvider.createAccessToken(email);
-        if (accessToken == null) {
-            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        if (existingUser.isPresent()) {
+            existingUser.get();
+        } else {
+            user = User.builder()
+                    .email(email)
+                    .name(name)
+                    .provider(provider)
+                    .providerUid(providerUid)
+                    .isRegistered(false)
+                    .build();
+            userRepository.save(user);
         }
-        String refreshToken = jwtTokenProvider.createRefreshToken(email);
-        if (refreshToken == null) {
-            throw new CustomException(ErrorCode.INVALID_TOKEN);
-        }
-
-        userRepository.save(user);
 
         return oAuth2User;
     }
