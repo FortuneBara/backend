@@ -29,6 +29,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = oAuth2User.getAttribute("email");
+        String frontendUrl = System.getenv("FRONTEND_URL") != null ? System.getenv("FRONTEND_URL") : "http://localhost:3000";
 
         Optional<User> userOptional = userRepository.findByEmailQueryDSL(email);
         if (userOptional.isPresent()) {
@@ -45,12 +46,12 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             response.addCookie(accessTokenCookie);
 
             if (user.getIsRegistered()) {
-                response.sendRedirect("http://localhost:3000/profile");
+                response.sendRedirect(frontendUrl + "/profile");
             } else {
-                response.sendRedirect("http://localhost:3000/signup?userId=" + user.getUserId() + "&email=" + user.getEmail());
+                response.sendRedirect(frontendUrl + "/signup?userId=" + user.getUserId() + "&email=" + user.getEmail());
             }
         } else {
-            response.sendRedirect("http://localhost:3000/login?error=user_not_found");
+            response.sendRedirect(frontendUrl + "/login?error=user_not_found");
         }
     }
 }

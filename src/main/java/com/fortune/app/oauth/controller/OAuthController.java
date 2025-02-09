@@ -97,7 +97,7 @@ public class OAuthController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @CrossOrigin(origins = "${FRONTEND_URL}", allowCredentials = "true")
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
         Cookie accessTokenCookie = new Cookie("accessToken", null);
