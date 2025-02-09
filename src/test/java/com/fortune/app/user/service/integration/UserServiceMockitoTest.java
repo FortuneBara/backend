@@ -42,8 +42,6 @@ class UserServiceMockitoTest {
                 .provider("Google")
                 .providerUid("1234")
                 .isRegistered(true)
-                .accessToken("access_token")
-                .refreshToken("refresh_token")
                 .birth(new java.sql.Date(2000, 1, 1))
                 .nickname("harus")
                 .createdAt(LocalDateTime.now())

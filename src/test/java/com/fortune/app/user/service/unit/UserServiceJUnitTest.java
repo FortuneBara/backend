@@ -47,8 +47,6 @@ class UserServiceJUnitTest {
                         .email("haru.every@example.com")
                         .provider("Google")
                         .providerUid("1234")
-                        .accessToken("access_token")
-                        .refreshToken("refresh_token")
                         .isRegistered(true)
                         .build()
         );

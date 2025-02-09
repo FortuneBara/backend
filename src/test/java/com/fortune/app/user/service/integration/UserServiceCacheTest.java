@@ -65,8 +65,6 @@ public class UserServiceCacheTest {
                         .email("john.doe@example.com")
                         .provider("Google")
                         .providerUid("1234")
-                        .accessToken("access_token")
-                        .refreshToken("refresh_token")
                         .isRegistered(true)
                         .build()
         );
