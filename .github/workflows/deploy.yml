@@ -106,6 +106,7 @@ jobs:
             -e SPRING_DATASOURCE_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} \
             -e SPRING_REDIS_HOST=redis-container \
             -e SPRING_REDIS_PORT=6379 \
+            -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
             -v /home/ubuntu/config/application.properties:/app/config/application.properties \
             ${{ secrets.DOCKER_HUB_USERNAME }}/fortune-app:${{ env.VERSION }}
           EOF
