@@ -58,20 +58,6 @@ jobs:
       - name: Extract Version from Tag
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
 
-      - name: Debug Docker Run Command
-        run: |
-          echo "Running: docker run -d \
-          -p 8080:8080 \
-          --name fortune-container \
-          --link mysql-container:mysql \
-          --link redis-container:redis \
-          -e DB_HOST=mysql-container \
-          -e DB_PORT=3306 \
-          -e REDIS_HOST=redis-container \
-          -e REDIS_PORT=6379 \
-          -v /home/ubuntu/config/application.properties:/app/config/application.properties \
-          ${{ secrets.DOCKER_HUB_USERNAME }}/fortune-app:${{ env.VERSION }}"
-
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no -i fortune-app-key.pem ${{ vars.EC2_USERNAME }}@${{ vars.EC2_HOST }} << 'EOF'
@@ -97,10 +83,12 @@ jobs:
           docker stop fortune-container || true
           docker rm fortune-container || true
           docker run -d \
-            -p 8080:8080 \
+            -p 443:443 \
             --name fortune-container \
             --link mysql-container:mysql \
             --link redis-container:redis \
+            -e SPRING_PROFILES_ACTIVE=prod \
+            -e SERVER_PORT=443 \
             -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql-container:3306/fortune_db \
             -e SPRING_DATASOURCE_USERNAME=root \
             -e SPRING_DATASOURCE_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} \
