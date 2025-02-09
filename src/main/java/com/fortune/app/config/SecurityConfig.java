@@ -38,12 +38,12 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/oauth2/authorization/google")
                         .successHandler(oAuth2LoginSuccessHandler)
-                        .failureUrl("http://localhost:3000/login?error=true")
+                        .failureUrl(System.getenv("FRONTEND_URL") + "/login?error=true")
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("http://localhost:3000/")
+                        .logoutSuccessUrl(System.getenv("FRONTEND_URL") + "/")
                         .logoutSuccessHandler(oAuth2LogoutSuccessHandler)
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
@@ -57,7 +57,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        String frontendUrl = System.getenv("FRONTEND_URL") != null ? System.getenv("FRONTEND_URL") : "http://localhost:3000";
+        configuration.setAllowedOrigins(List.of(frontendUrl));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
