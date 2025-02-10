@@ -32,3 +32,5 @@ spring.thymeleaf.cache=false
 
 # JWT
 jwt.secret=secret
+
+FRONTEND_URL=
