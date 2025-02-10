@@ -41,7 +41,6 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage(backendUrl + "/oauth2/authorization/google")
                         .successHandler(oAuth2LoginSuccessHandler)
                         .failureUrl(frontendUrl + "/login?error=true")
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
