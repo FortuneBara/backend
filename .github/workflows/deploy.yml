@@ -83,7 +83,7 @@ jobs:
           docker stop fortune-container || true
           docker rm fortune-container || true
           docker run -d \
-            -p 80:80 \
+            -p 8080:8080 \
             --name fortune-container \
             --link mysql-container:mysql \
             --link redis-container:redis \
