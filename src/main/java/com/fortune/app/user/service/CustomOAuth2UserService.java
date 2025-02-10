@@ -5,11 +5,14 @@ import com.fortune.app.user.entity.User;
 import com.fortune.app.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Optional;
 
 @Service
@@ -33,7 +36,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         User user;
         if (existingUser.isPresent()) {
-            existingUser.get();
+            user = existingUser.get();
         } else {
             user = User.builder()
                     .email(email)
@@ -42,9 +45,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .providerUid(providerUid)
                     .isRegistered(false)
                     .build();
-            userRepository.save(user);
+            user = userRepository.save(user);
         }
 
-        return oAuth2User;
+        return new DefaultOAuth2User(
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")), // 권한 부여
+                oAuth2User.getAttributes(),
+                "email" // 식별자
+        );
     }
 }
