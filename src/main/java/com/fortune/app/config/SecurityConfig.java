@@ -36,6 +36,12 @@ public class SecurityConfig {
         log.info("🔄 SecurityFilterChain 설정 시작");
 
         http
+                .requiresChannel(channel -> channel
+                        .anyRequest().requiresSecure()
+                )
+                .headers(headers -> headers
+                        .httpStrictTransportSecurity(hsts -> hsts.disable())
+                )
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
