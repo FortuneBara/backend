@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.Optional;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
@@ -24,6 +23,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
+    @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
@@ -37,7 +37,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         User user;
         if (existingUser.isPresent()) {
             user = existingUser.get();
-            System.out.println("기존 유저 로그인: " + user.getEmail());
         } else {
             user = User.builder()
                     .email(email)
