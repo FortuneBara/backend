@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @Component
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
-    @Value("${frontend.url:http://localhost:3000}")
+    @Value("${frontend.url}")
     private String frontendUrl;
 
     private final UserRepository userRepository;
