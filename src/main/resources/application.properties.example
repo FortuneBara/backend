@@ -35,3 +35,5 @@ jwt.secret=secret
 
 frontend.url=http://localhost:3000
 #frontend.url=
+backend.url=http://localhost:8080
+#backend.url=

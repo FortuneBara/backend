@@ -27,6 +27,8 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     @Value("${frontend.url}")
     private String frontendUrl;
+    @Value("${backend.url}")
+    private String backendUrl;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -39,7 +41,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/oauth2/authorization/google")
+                        .loginPage(backendUrl + "/oauth2/authorization/google")
                         .successHandler(oAuth2LoginSuccessHandler)
                         .failureUrl(frontendUrl + "/login?error=true")
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
