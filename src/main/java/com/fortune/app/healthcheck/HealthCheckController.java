@@ -1,6 +1,6 @@
 package com.fortune.app.healthcheck;
 
-import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HealthCheckController {
 
     @GetMapping
-    public String healthCheck(HttpServletRequest request) {
-        String clientIp = request.getRemoteAddr();
-        return "당신의 IP는: " + clientIp;
+    public ResponseEntity healthCheck() {
+        return ResponseEntity.ok().build();
     }
 }
