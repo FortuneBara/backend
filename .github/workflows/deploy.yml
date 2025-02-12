@@ -96,5 +96,6 @@ jobs:
             -e SPRING_REDIS_PORT=6379 \
             -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
             -v /home/ubuntu/config/application.properties:/app/config/application.properties \
+            -e "SPRING_CONFIG_LOCATION=file:/app/config/"
             ${{ secrets.DOCKER_HUB_USERNAME }}/fortune-app:${{ env.VERSION }}
           EOF
