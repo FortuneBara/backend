@@ -23,6 +23,9 @@ public class UserRequestDto {
     @NotNull(groups = SignUpGroup.class, message = "nickname is required.")
     private String nickname;
 
+    @NotNull(groups = SignUpGroup.class, message = "email is required.")
+    private String email;
+
     @NotNull(groups = SignUpGroup.class, message = "birth is required.")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date birth;
@@ -30,8 +33,9 @@ public class UserRequestDto {
     public static UserRequestDto mapToDto(User entity) {
         return UserRequestDto.builder()
                 .userId(entity.getUserId())
-                .birth(entity.getBirth())
                 .nickname(entity.getNickname())
+                .email(entity.getEmail())
+                .birth(entity.getBirth())
                 .build();
     }
 }
