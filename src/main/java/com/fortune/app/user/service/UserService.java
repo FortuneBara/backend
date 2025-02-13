@@ -35,9 +35,12 @@ public class UserService {
             @CacheEvict(value = CacheNames.USER_LIST, key = "T(com.fortune.app.common.util.CacheUtil).getUserListCacheKey()")}
     )
     public UserDto completeRegistration(UserRequestDto dto) {
-        Optional<User> oauthUser = userRepository.findByUserIdQueryDSL(dto.getUserId());
+        Optional<User> optionalUser = userRepository.findByUserIdQueryDSL(dto.getUserId());
         if (!oauthUser.isPresent()) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+        if (!user.getEmail().equals(dto.getEmail())) {
+            throw new CustomException(ErrorCode.INVALID_EMAIL);
         }
 
         User user = oauthUser.get();
