@@ -36,14 +36,15 @@ public class UserService {
     )
     public UserDto completeRegistration(UserRequestDto dto) {
         Optional<User> oauthUser = userRepository.findByUserIdQueryDSL(dto.getUserId());
-        if (!oauthUser.isPresent()) {
+        if (oauthUser.isEmpty()) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
+
+        User user = oauthUser.get();
         if (!user.getEmail().equals(dto.getEmail())) {
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
         }
 
-        User user = oauthUser.get();
         user.completeRegistration(dto.getNickname(), dto.getBirth());
         userRepository.save(user);
 
